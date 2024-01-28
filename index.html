@@ -1,16 +1,84 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Astronauts</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <script src="script.js"></script>
-    <h1>Astronauts</h1>
-    <div id="container">
-        <!-- List of astronauts will be added here dynamically -->
-    </div>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astronauts</title>
+  <style>
+    .astronaut {
+        border: 2px solid #eee;
+        padding: 15px;
+        margin: 10px;
+        text-align: center;
+    }
+
+    .astronaut img {
+        max-width: 100%;
+        border-radius: 50%;
+    }
+
+    .active {
+        color: green;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  window.onload = function () {
+      // Fetch data from the astronauts API
+      fetch('https://handlers.education.launchcode.org/static/astronauts.json')
+          .then(response => response.json())
+          .then(data => {
+              // Sort astronauts by hours in space (descending order)
+              data.sort((a, b) => b.hoursInSpace - a.hoursInSpace);
+
+              // Loop through each astronaut and add to the web page
+              data.forEach(astronaut => {
+                  addAstronautToPage(astronaut);
+              });
+
+              // Add count of astronauts to the page
+              addAstronautCountToPage(data.length);
+          })
+          .catch(error => console.error('Error fetching astronauts:', error));
+
+      // Function to add astronaut to the web page
+      function addAstronautToPage(astronaut) {
+          // Create a new div element with the astronaut class
+          const astronautDiv = document.createElement('div');
+          astronautDiv.classList.add('astronaut');
+
+          // Create and append the HTML template with astronaut details
+          astronautDiv.innerHTML = `
+              <img src="${astronaut.picture}" alt="${astronaut.firstName} ${astronaut.lastName}'s Picture">
+              <h2>${astronaut.firstName} ${astronaut.lastName}</h2>
+              <ul>
+                  <li><strong>Hours in space:</strong> ${astronaut.hoursInSpace}</li>
+                  <li class="${astronaut.active ? 'active' : ''}"><strong>Active:</strong> ${astronaut.active}</li>
+                  <li><strong>Skills:</strong> ${astronaut.skills.join(', ')}</li>
+              </ul>
+          `;
+
+          // Append the astronaut div to the body of the page
+          document.body.appendChild(astronautDiv);
+      }
+
+      // Function to add count of astronauts to the page
+      function addAstronautCountToPage(count) {
+          // Create a new div element with the count class
+          const countDiv = document.createElement('div');
+          countDiv.classList.add('count');
+
+          // Add count information to the div
+          countDiv.textContent = `Total Astronauts: ${count}`;
+
+          // Append the count div to the body of the page
+          document.body.appendChild(countDiv);
+      }
+  };
+</script>
+
+</body>
 </html>
